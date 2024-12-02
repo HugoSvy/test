@@ -1,13 +1,65 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appel d'un Script</title>
+    <title>Web Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <button id="notifyButton">Envoyez une notification !</button>
+    <h1>Web Notification Demo</h1>
+    <p>Cliquez sur le bouton pour voir une notification.</p>
+    <button id="notifyBtn">Afficher une notification</button>
 
-    <script src="script.js"></script>
+    <script>
+        // Vérification de la compatibilité de l'API Notification
+        if (!("Notification" in window)) {
+            alert("Les notifications ne sont pas prises en charge par ce navigateur.");
+        } else {
+            const notifyBtn = document.getElementById('notifyBtn');
+
+            // Gestion du clic sur le bouton
+            notifyBtn.addEventListener('click', () => {
+                // Demander la permission si nécessaire
+                if (Notification.permission === "granted") {
+                    showNotification();
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            showNotification();
+                        } else {
+                            alert("Les notifications ont été refusées.");
+                        }
+                    });
+                } else {
+                    alert("Les notifications sont désactivées pour ce site.");
+                }
+            });
+
+            // Fonction pour afficher une notification
+            function showNotification() {
+                const notification = new Notification("Bonjour !", {
+                    body: "Ceci est une notification web.",
+                    icon: "https://via.placeholder.com/128" // URL de l'icône
+                });
+
+                // Gestion des clics sur la notification
+                notification.onclick = () => {
+                    window.focus();
+                };
+            }
+        }
+    </script>
 </body>
 </html>
