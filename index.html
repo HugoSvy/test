@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Notification</title>
+    <title>Notification avec Service Worker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,47 +18,47 @@
     </style>
 </head>
 <body>
-    <h1>Web Notification Demo</h1>
-    <p>Cliquez sur le bouton pour voir une notification.</p>
+    <h1>Notification avec Service Worker</h1>
+    <p>Cliquez sur le bouton pour afficher une notification.</p>
     <button id="notifyBtn">Afficher une notification</button>
 
     <script>
-        // Vérification de la compatibilité de l'API Notification
-        if (!("Notification" in window)) {
-            alert("Les notifications ne sont pas prises en charge par ce navigateur.");
-        } else {
-            const notifyBtn = document.getElementById('notifyBtn');
+        // Vérifier si Service Workers et Notifications sont pris en charge
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            navigator.serviceWorker.register('sw.js').then(registration => {
+                console.log("Service Worker enregistré avec succès :", registration);
 
-            // Gestion du clic sur le bouton
-            notifyBtn.addEventListener('click', () => {
-                // Demander la permission si nécessaire
-                if (Notification.permission === "granted") {
-                    showNotification();
-                } else if (Notification.permission !== "denied") {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === "granted") {
-                            showNotification();
-                        } else {
-                            alert("Les notifications ont été refusées.");
-                        }
-                    });
-                } else {
-                    alert("Les notifications sont désactivées pour ce site.");
-                }
-            });
-
-            // Fonction pour afficher une notification
-            function showNotification() {
-                const notification = new Notification("Bonjour !", {
-                    body: "Ceci est une notification web.",
-                    icon: "https://via.placeholder.com/128" // URL de l'icône
+                const notifyBtn = document.getElementById('notifyBtn');
+                notifyBtn.addEventListener('click', () => {
+                    // Demander la permission si nécessaire
+                    if (Notification.permission === "granted") {
+                        showNotification(registration);
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === "granted") {
+                                showNotification(registration);
+                            } else {
+                                alert("Permission de notification refusée.");
+                            }
+                        });
+                    } else {
+                        alert("Les notifications sont désactivées.");
+                    }
                 });
 
-                // Gestion des clics sur la notification
-                notification.onclick = () => {
-                    window.focus();
-                };
-            }
+                // Fonction pour afficher une notification
+                function showNotification(registration) {
+                    registration.showNotification("Bonjour !", {
+                        body: "Ceci est une notification via Service Worker.",
+                        icon: "https://via.placeholder.com/128", // URL de l'icône
+                        tag: "demo-notification" // Évite les notifications multiples identiques
+                    });
+                }
+            }).catch(error => {
+                console.error("Erreur lors de l'enregistrement du Service Worker :", error);
+            });
+        } else {
+            alert("Votre navigateur ne supporte pas les notifications ou les Service Workers.");
         }
     </script>
 </body>
