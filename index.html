@@ -30,12 +30,14 @@
 
 <body>
     <h1>Test de bouton avec Cypress</h1>
+    <p></p>
     <button id="testButton">Cliquez moi</button>
 
     <script>
         document.getElementById('testButton').addEventListener('click', function () {
             this.textContent = 'Clic effectué';  // Change le texte du bouton après un clic
         });
+
     </script>
 </body>
 
