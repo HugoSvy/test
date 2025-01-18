@@ -1,0 +1,32 @@
+name: Test Button with Cypress
+
+on:
+  push:
+    branches:
+      - main  # Exécuter les tests quand tu pushes sur la branche main
+  pull_request:
+    branches:
+      - main  # Exécuter les tests sur une PR
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout le code
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Choisir la version de Node.js que tu utilises
+
+      # Installer les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # Exécuter Cypress
+      - name: Run Cypress tests
+        run: npx cypress run
